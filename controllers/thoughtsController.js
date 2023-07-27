@@ -29,14 +29,11 @@ module.exports = {
   async createThought(req, res) {
     try {
       const thought = await Thought.create(req.body);
-
-      const user = await User.findOneAndUpdate(
+      const User = await User.findOneAndUpdate(
         {_id: req.body.userId},
         { $push: {thoughts: thought._id }}
       )
-
       res.json(thought);
-
     } catch (err) {
       console.log(err);
       return res.status(500).json(err);
@@ -50,11 +47,9 @@ module.exports = {
         { $set: req.body },
         { runValidators: true, new: true }
       );
-
       if (!thought) {
         res.status(404).json({ message: 'No thought with this id!' });
       }
-
       res.json(thought);
     } catch (err) {
       res.status(500).json(err);
@@ -64,11 +59,9 @@ module.exports = {
   async deleteThought(req, res) {
     try {
       const thought = await Thought.findOneAndDelete({ _id: req.params.thoughtId });
-
       if (!thought) {
         res.status(404).json({ message: 'No thought with that ID' });
       }
-
       await Student.deleteMany({ _id: { $in: thought.students } });
       res.json({ message: 'Thought deleted!' });
     } catch (err) {
@@ -83,11 +76,9 @@ module.exports = {
         { $addToSet: { reactions: req.body } },
         { runValidators: true, new: true }
       );
-
       if (!thought) {
         return res.status(404).json({ message: "No thought with this id!" });
       }
-
       res.json(thought);
     } catch (err) {
       res.status(500).json(err);
@@ -101,11 +92,9 @@ module.exports = {
         { $pull: { reactions: { reactionId: req.params.reactionId } } },
         { runValidators: true, new: true }
       );
-
       if (!thought) {
         return res.status(404).json({ message: "No thought with this id!" });
       }
-
       res.json(thought);
     } catch (err) {
       res.status(500).json(err);
