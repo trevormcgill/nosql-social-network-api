@@ -29,7 +29,7 @@ module.exports = {
   async createThought(req, res) {
     try {
       const thought = await Thought.create(req.body);
-      const User = await User.findOneAndUpdate(
+      const user = await User.findOneAndUpdate(
         {_id: req.body.userId},
         { $push: {thoughts: thought._id }}
       )
@@ -58,16 +58,16 @@ module.exports = {
 
   async deleteThought(req, res) {
     try {
-      const thought = await Thought.findOneAndDelete({ _id: req.params.thoughtId });
-      if (!thought) {
-        res.status(404).json({ message: 'No thought with that ID' });
-      }
-      await Student.deleteMany({ _id: { $in: thought.students } });
-      res.json({ message: 'Thought deleted!' });
-    } catch (err) {
-      res.status(500).json(err);
-    }
-  },
+        const thought = await Thought.findOneAndRemove({ _id: req.params.thoughtId });
+        if (!thought) {
+            return res.status(404).json({ message: 'No thought with this id!' });
+        }
+        res.json({ message: 'Thought successfully deleted!' });
+        } catch (err) {
+            console.log(err);
+            res.status(500).json(err);
+        }
+},
 
   async addReaction(req, res) {
     try {
@@ -85,20 +85,23 @@ module.exports = {
     }
   },
 
+
+
   async removeReaction(req, res) {
-    try {
+  try {
       const thought = await Thought.findOneAndUpdate(
-        { _id: req.params.thoughtId },
-        { $pull: { reactions: { reactionId: req.params.reactionId } } },
-        { runValidators: true, new: true }
+          { _id: req.params.thoughtId },
+          { $pull: { reactions: {reactionId: req.body.reactionId} } },
+          { runValidators: true, new: true }
       );
       if (!thought) {
-        return res.status(404).json({ message: "No thought with this id!" });
+          return res
+              .status(404)
+              .json({ message: 'No Thought found with that Id' });
       }
       res.json(thought);
-    } catch (err) {
+  } catch (err) {
       res.status(500).json(err);
-    }
-  },
-
-}
+  }
+  }
+};
