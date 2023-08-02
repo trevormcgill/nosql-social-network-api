@@ -12,3 +12,5 @@ In this challenge, the objective was to build an API for a social network web ap
 
 <br>
 
+https://github.com/trevormcgill/nosql-social-network-api/assets/124531579/737793d4-19e9-44aa-aba4-a4d5a6135e89
+
